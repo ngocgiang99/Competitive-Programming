@@ -236,19 +236,24 @@ int sub4() {
         for (int l = r-1; l >= 0; --l) {
             
             sum = get_table(0, l, m-1, r);
-            if (k_idx.find())
-            if (sum&1) continue;
-            int k = -1; // Note: Find k
+            if ((sum&1) || k_idx.find(sum >> 1) == k_idx.end()) {
+                k_idx[sum] = l;
+                continue;
+            }
+            int k = k_idx[sum >> 1]; // Note: Find k
+            k_idx[sum] = l;
+
+
 
             if (!is_collapse_col[l][k-1]) continue;
             if (!is_collapse_col[k][r]) continue;
             is_collapse_col[l][r] = 1;
-            clog << db(l) << db(r) <<endl;
+            // clog << db(l) << db(r) <<endl;
         }
     }
-    for (int l = 0; l < n; ++l)
-    for (int r = l; r < n; ++r)
-    clog << db(l) << db(r) << db(is_collapse_col[l][r]) <<endl;
+    // for (int l = 0; l < n; ++l)
+    // for (int r = l; r < n; ++r)
+    // clog << db(l) << db(r) << db(is_collapse_col[l][r]) <<endl;
 
     for (int i = 0; i < n; ++i) {
         f[i] = i+1;
@@ -268,32 +273,24 @@ int sub4() {
     for (int i = 0; i < m; ++i) is_collapse_row[i][i] = 1;
     for (int r = 0; r < m; ++r) {
         // is_collapse_row[l][l] = 1;
+        map<int, int> k_idx;
+        int sum = get_table(r, 0, r, n-1);
+        k_idx[sum] = r;
         for (int l = r-1; l >= 0; --l) {
-            int k = -1; // Note: Find k
-
-            int ll = l+1;
-            int rr = r;
-            while (ll <= rr) {
-                int mm = (ll + rr) >> 1;
-                int left_sum = get_table(l, 0, mm-1, n-1);
-                int right_sum = get_table(mm, 0, r, n-1);
-                clog << db(ll) << db(mm) << db(rr) << db(left_sum) << db(right_sum) <<endl;
-                if (left_sum == right_sum) {
-                    k = mm;
-                    break;
-                }
-                if (left_sum < right_sum)
-                    ll = mm+1;
-                else
-                    rr = mm-1;
+            sum = get_table(l, 0, r, n-1);
+            if ((sum&1) || k_idx.find(sum >> 1) == k_idx.end()) {
+                k_idx[sum] = l;
+                continue;
             }
+            int k = k_idx[sum >> 1]; // Note: Find k
+            k_idx[sum] = l;
             
             if (k == -1) continue;
 
             if (!is_collapse_row[l][k-1]) continue;
             if (!is_collapse_row[k][r]) continue;
             is_collapse_row[l][r] = 1;
-            clog << db(l) << db(r) <<endl;
+            // clog << db(l) << db(r) <<endl;
         }
     }
 
